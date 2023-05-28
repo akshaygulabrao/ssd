@@ -41,9 +41,3 @@ class Backbone(nn.Module):
         x = self.maxpool5(self.relu5(self.bn5(self.conv5(x))))
         outputs.append(x.clone())
         return outputs
-
-random_img = torch.randn((1,3,512,512))
-backbone = Backbone()
-out = backbone(random_img)
-for i in out:
-    print(i.shape)
