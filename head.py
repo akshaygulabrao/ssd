@@ -4,22 +4,19 @@ import torch.nn as nn
 from backbone import Backbone
 
 class SSDHead(nn.Module):
-    def __init__(self, num_classes, num_anchors):
+    def __init__(self, num_classes):
         super(SSDHead, self).__init__()
-
         self.num_classes = num_classes
-        self.num_anchors = num_anchors
-
         self.classification_layers = nn.ModuleList([
-            nn.Conv2d(256, num_anchors * num_classes, kernel_size=3, padding=1),
-            nn.Conv2d(512, num_anchors * num_classes, kernel_size=3, padding=1),
-            nn.Conv2d(512, num_anchors * num_classes, kernel_size=3, padding=1)
+            nn.Conv2d(256, num_classes, kernel_size=3, padding='same'),
+            nn.Conv2d(512, num_classes, kernel_size=3, padding='same'),
+            nn.Conv2d(512, num_classes, kernel_size=3, padding='same')
         ])
 
-        self.regression_layers = nn.ModuleList([
-            nn.Conv2d(256, num_anchors * 4, kernel_size=3, padding=1),
-            nn.Conv2d(512, num_anchors * 4, kernel_size=3, padding=1),
-            nn.Conv2d(512, num_anchors * 4, kernel_size=3, padding=1)
+        self.regression_layers = nn.ModuleList([    
+            nn.Conv2d(256, 4, kernel_size=3, padding='same'),
+            nn.Conv2d(512, 4, kernel_size=3, padding='same'),
+            nn.Conv2d(512, 4, kernel_size=3, padding='same')
         ])
 
     def forward(self, features):
@@ -36,13 +33,17 @@ class SSDHead(nn.Module):
         return class_predictions, box_regression
 
 class SSDModel(nn.Module):
-    def __init__(self, num_classes, num_anchors):
+    def __init__(self,num_classes):
         super(SSDModel, self).__init__()
 
         self.backbone = Backbone()
-        self.head = SSDHead(num_classes, num_anchors)
+        self.head = SSDHead(num_classes)
 
     def forward(self, x):
         features = self.backbone(x)
         class_predictions, box_regression = self.head(features)
         return class_predictions, box_regression
+
+ssd = SSDModel(2)
+a = torch.randn((1,3,512,512))
+ssd(a)

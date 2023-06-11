@@ -1,2 +1,4 @@
 drinks/
 __pycache__/
+*png
+*ipynb_checkpoints/
